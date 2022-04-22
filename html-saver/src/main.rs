@@ -8,8 +8,13 @@ fn main() {
     let interval = matches.value_of("interval").unwrap_or("1").parse::<u64>().unwrap();
     let sleep_time = matches.value_of("sleep").unwrap_or("0").parse::<u64>().unwrap();
 
-    println!("sleeping for {} minutes...", sleep_time);
-    std::thread::sleep(Duration::from_secs(sleep_time * 60));
+    if sleep_time > 0 {
+        println!("sleeping for {} minutes...", sleep_time);
+        std::thread::sleep(Duration::from_secs(sleep_time * 60));
+    } else {
+        println!("starting now...")
+    }
+
     loop {
         let response = reqwest::blocking::get(url).unwrap();
         let content = response.text().unwrap();
@@ -33,6 +38,7 @@ fn cli() -> Command<'static> {
                            Arg::new("url")
                            .short('u')
                            .long("url")
+                           .required(true)
                            .help("The url to get html content and save")
                            .takes_value(true)
                        )
